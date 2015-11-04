@@ -10,9 +10,9 @@ describe('Logger', function () {
 	this.slow(5000);
 
 	after('terminate child process', function () {
-        setTimeout(function(){
-            logger.kill('SIGKILL');
-        },5000);
+		setTimeout(function () {
+			logger.kill('SIGKILL');
+		}, 5000);
 	});
 
 	describe('#spawn', function () {
@@ -43,8 +43,8 @@ describe('Logger', function () {
 		});
 	});
 
-	describe('#logJSON', function (done) {
-		it('should process the json log data', function () {
+	describe('#logJSON', function () {
+		it('should process the json log data', function (done) {
 			logger.send({
 				type: 'log',
 				data: JSON.stringify({
@@ -55,12 +55,12 @@ describe('Logger', function () {
 		});
 	});
 
-    describe('#logString', function (done) {
-        it('should process the string log data', function () {
-            logger.send({
-                type: 'log',
-                data: 'This is a sample String log data to test sumologic'
-            }, done);
-        });
-    });
+	describe('#logString', function () {
+		it('should process the string log data', function (done) {
+			logger.send({
+				type: 'log',
+				data: 'This is a sample String log data to test sumologic'
+			}, done);
+		});
+	});
 });
