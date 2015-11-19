@@ -31,5 +31,6 @@ platform.on('close', function () {
 platform.once('ready', function (options) {
 	httpSource = options.http_source;
 
+	platform.log('Sumologic Logger initialized.');
 	platform.notifyReady();
 });
