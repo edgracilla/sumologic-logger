@@ -1,35 +1,34 @@
-'use strict';
+'use strict'
 
-var platform = require('./platform'),
-	request  = require('request'),
-	httpSource;
+const reekoh = require('reekoh')
+const _plugin = new reekoh.plugins.Logger()
+const request = require('request')
 
-/*
- * Listen for the log event.
- */
-platform.on('log', function (logData) {
-	if (!logData) return;
+let httpSource = null
 
-	request.post({
-		url: httpSource,
-		body: logData
-	}, function (error) {
-		if (error) platform.handleException(error);
-	});
-});
+_plugin.on('log', (logData) => {
+  if (!logData) return
 
-/*
- * Event to listen to in order to gracefully release all resources bound to this service.
- */
-platform.on('close', function () {
-	platform.notifyClose();
-});
+  request.post({
+    url: httpSource,
+    json: logData
+  }, (error) => {
+    if (error) {
+      console.error('Error on Sumologic.', error)
+      _plugin.logException(error)
+    }
+    _plugin.log(JSON.stringify({
+      title: 'Log sent to Sumologic',
+      data: logData
+    }))
+  })
+})
 
-/*
- * Listen for the ready event.
- */
-platform.once('ready', function (options) {
-	httpSource = options.http_source;
+_plugin.once('ready', () => {
+  httpSource = _plugin.config.httpSource
+  _plugin.log('Sumologic has been initialized.')
+  _plugin.emit('init')
+})
 
-	platform.notifyReady();
-});
+module.exports = _plugin
+
