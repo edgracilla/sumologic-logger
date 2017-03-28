@@ -1,12 +1,12 @@
 'use strict'
 
 const reekoh = require('reekoh')
-const _plugin = new reekoh.plugins.Logger()
+const plugin = new reekoh.plugins.Logger()
 const request = require('request')
 
 let httpSource = null
 
-_plugin.on('log', (logData) => {
+plugin.on('log', (logData) => {
   if (!logData) return
 
   request.post({
@@ -15,20 +15,20 @@ _plugin.on('log', (logData) => {
   }, (error) => {
     if (error) {
       console.error('Error on Sumologic.', error)
-      _plugin.logException(error)
+      plugin.logException(error)
     }
-    _plugin.log(JSON.stringify({
+    plugin.log(JSON.stringify({
       title: 'Log sent to Sumologic',
       data: logData
     }))
   })
 })
 
-_plugin.once('ready', () => {
-  httpSource = _plugin.config.httpSource
-  _plugin.log('Sumologic has been initialized.')
-  _plugin.emit('init')
+plugin.once('ready', () => {
+  httpSource = plugin.config.httpSource
+  plugin.log('Sumologic has been initialized.')
+  plugin.emit('init')
 })
 
-module.exports = _plugin
+module.exports = plugin
 
